@@ -1,11 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Algebra Solver</title>
+  <style>
+    body { font-family: Arial; background:#0f172a; color:white; }
+    .container { max-width:700px; margin:40px auto; background:#111827; padding:20px; border-radius:10px; }
+    textarea { width:100%; height:120px; }
+    button { width:100%; padding:10px; margin-top:10px; }
+    #result { margin-top:20px; background:#1f2937; padding:15px; border-radius:10px; }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Algebra Solver</h2>
+
+  <textarea id="input" placeholder="Type problem here..."></textarea>
+
+  <button onclick="solve()">Solve</button>
+
+  <div id="result"></div>
+</div>
+
 <script>
 function solve() {
   let text = document.getElementById("input").value.toLowerCase();
   let result = document.getElementById("result");
 
-  // =========================
-  // 1. LINEAR EQUATIONS
-  // =========================
+  // safety check
+  if (!text) {
+    result.innerHTML = "Please enter a problem.";
+    return;
+  }
+
+  // linear equation detection
   let eqMatch = text.match(/([+-]?\d*)x\s*([+-]\s*\d+)?\s*=\s*([+-]?\d+)/);
 
   if (eqMatch) {
@@ -19,67 +48,33 @@ function solve() {
 
     let x = (c - b) / a;
 
-    result.innerHTML = `
-      <b>📘 Linear Equation</b><br><br>
-      Step 1: Move constant<br>
-      ${a}x = ${c - b}<br><br>
+    result.innerHTML =
+      "Linear Equation<br><br>" +
+      "x = " + x;
 
-      Step 2: Divide<br>
-      x = ${x}<br><br>
-
-      <b>✔ Answer: x = ${x}</b>
-    `;
     return;
   }
 
-  // =========================
-  // 2. FENCING / OPTIMIZATION PROBLEMS
-  // =========================
+  // fencing problem
   if (text.includes("fencing") || text.includes("garden") || text.includes("wall")) {
+    let P = 100;
 
-    let P = 100; // default perimeter
+    let x = P / 4;
+    let y = P / 2;
+    let area = x * y;
 
-    result.innerHTML = `
-      <b>📘 Optimization Problem (Fence with one wall)</b><br><br>
+    result.innerHTML =
+      "Optimization Problem<br><br>" +
+      "Width = " + x + "<br>" +
+      "Length = " + y + "<br>" +
+      "Max Area = " + area;
 
-      Step 1: Let width = x<br>
-      Step 2: Only 3 sides are fenced<br>
-      Step 3: So equation: 2x + y = ${P}<br><br>
-
-      Step 4: Solve for y:<br>
-      y = ${P} - 2x<br><br>
-
-      Step 5: Area function:<br>
-      A = x(${P} - 2x)<br>
-      A = ${P}x - 2x²<br><br>
-
-      Step 6: Maximum area occurs at vertex:<br>
-      x = -b / (2a)<br>
-      x = -${P} / (2 × -2)<br>
-      x = ${P / 4}<br><br>
-
-      Step 7: Find y:<br>
-      y = ${P} - 2(${P / 4}) = ${P / 2}<br><br>
-
-      <b>✔ Dimensions:</b><br>
-      Width (x) = ${P / 4} ft<br>
-      Length (y) = ${P / 2} ft<br><br>
-
-      <b>✔ Maximum Area:</b><br>
-      A = ${P / 4} × ${P / 2} = ${(P * P) / 8} sq ft
-    `;
     return;
   }
 
-  // =========================
-  // DEFAULT
-  // =========================
-  result.innerHTML = `
-    ❗ Supported problems:<br>
-    • Linear equations (2x + 5 = 15)<br>
-    • Fencing / optimization problems<br><br>
-
-    Try rephrasing your question.
-  `;
+  result.innerHTML = "Problem not recognized yet.";
 }
 </script>
+
+</body>
+</html>
