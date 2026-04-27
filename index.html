@@ -1,73 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Smart Algebra Solver</title>
-
-  <style>
-    body {
-      font-family: Arial;
-      background: #0f172a;
-      color: white;
-      margin: 0;
-      padding: 0;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 40px auto;
-      background: #111827;
-      padding: 25px;
-      border-radius: 12px;
-    }
-
-    h1 {
-      text-align: center;
-      color: #60a5fa;
-    }
-
-    textarea {
-      width: 100%;
-      height: 110px;
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 8px;
-    }
-
-    button {
-      width: 100%;
-      margin-top: 10px;
-      padding: 12px;
-      background: #2563eb;
-      color: white;
-      border: none;
-      border-radius: 8px;
-    }
-
-    #result {
-      margin-top: 20px;
-      background: #1f2937;
-      padding: 15px;
-      border-radius: 10px;
-      line-height: 1.6;
-    }
-  </style>
-</head>
-
-<body>
-
-<div class="container">
-  <h1>📘 Smart Algebra Solver (No API)</h1>
-
-  <textarea id="input" placeholder="Try:
-2x + 5 = 15
-OR:
-A rectangle has length 5 more than width and area 84"></textarea>
-
-  <button onclick="solve()">Solve</button>
-
-  <div id="result"></div>
-</div>
-
 <script>
 function solve() {
   let text = document.getElementById("input").value.toLowerCase();
@@ -87,52 +17,56 @@ function solve() {
     b = b ? parseInt(b.replace(/\s/g, "")) : 0;
     c = parseInt(c);
 
-    let step1 = c - b;
-    let x = step1 / a;
+    let x = (c - b) / a;
 
     result.innerHTML = `
-      <b>📘 Linear Equation Solution</b><br><br>
-      Step 1: Move constant to right side<br>
+      <b>📘 Linear Equation</b><br><br>
+      Step 1: Move constant<br>
       ${a}x = ${c - b}<br><br>
 
-      Step 2: Divide both sides by ${a}<br>
-      x = ${(c - b)} / ${a}<br><br>
+      Step 2: Divide<br>
+      x = ${x}<br><br>
 
-      <b>✔ Final Answer: x = ${x}</b>
+      <b>✔ Answer: x = ${x}</b>
     `;
     return;
   }
 
   // =========================
-  // 2. RECTANGLE WORD PROBLEM
+  // 2. FENCING / OPTIMIZATION PROBLEMS
   // =========================
-  if (text.includes("rectangle") && text.includes("area")) {
+  if (text.includes("fencing") || text.includes("garden") || text.includes("wall")) {
+
+    let P = 100; // default perimeter
+
     result.innerHTML = `
-      <b>📘 Rectangle Word Problem</b><br><br>
+      <b>📘 Optimization Problem (Fence with one wall)</b><br><br>
 
       Step 1: Let width = x<br>
-      Step 2: Let length = x + k (difference given in question)<br>
-      Step 3: Use formula A = l × w<br>
-      Step 4: Build equation<br>
-      Step 5: Solve for x<br><br>
+      Step 2: Only 3 sides are fenced<br>
+      Step 3: So equation: 2x + y = ${P}<br><br>
 
-      ✔ Tip: Convert words → equation first
-    `;
-    return;
-  }
+      Step 4: Solve for y:<br>
+      y = ${P} - 2x<br><br>
 
-  // =========================
-  // 3. AGE PROBLEMS
-  // =========================
-  if (text.includes("age")) {
-    result.innerHTML = `
-      <b>📘 Age Problem Strategy</b><br><br>
-      Step 1: Let current age = x<br>
-      Step 2: Future/past = x ± number<br>
-      Step 3: Form equation using condition<br>
-      Step 4: Solve like linear equation<br><br>
+      Step 5: Area function:<br>
+      A = x(${P} - 2x)<br>
+      A = ${P}x - 2x²<br><br>
 
-      ✔ Tip: Track time changes carefully
+      Step 6: Maximum area occurs at vertex:<br>
+      x = -b / (2a)<br>
+      x = -${P} / (2 × -2)<br>
+      x = ${P / 4}<br><br>
+
+      Step 7: Find y:<br>
+      y = ${P} - 2(${P / 4}) = ${P / 2}<br><br>
+
+      <b>✔ Dimensions:</b><br>
+      Width (x) = ${P / 4} ft<br>
+      Length (y) = ${P / 2} ft<br><br>
+
+      <b>✔ Maximum Area:</b><br>
+      A = ${P / 4} × ${P / 2} = ${(P * P) / 8} sq ft
     `;
     return;
   }
@@ -141,15 +75,11 @@ function solve() {
   // DEFAULT
   // =========================
   result.innerHTML = `
-    ❗ I can currently solve:<br>
+    ❗ Supported problems:<br>
     • Linear equations (2x + 5 = 15)<br>
-    • Basic rectangle word problems<br>
-    • Age problems<br><br>
+    • Fencing / optimization problems<br><br>
 
-    Try rewriting your question in a simpler format.
+    Try rephrasing your question.
   `;
 }
 </script>
-
-</body>
-</html>
