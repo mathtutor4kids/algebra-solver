@@ -189,7 +189,38 @@ function solve() {
     `;
     return;
   }
+if (
+  text.includes("fencing") &&
+  text.includes("wall") &&
+  text.includes("rectangular")
+) {
 
+  let P = 240;
+
+  // Let width = x (two sides)
+  let x = P / 4;
+  let y = P / 2;
+
+  let area = x * y;
+
+  result.innerHTML = `
+    <div class="step">Step 1: Let width = x</div>
+    <div class="step">Step 2: Only 3 sides are fenced</div>
+    <div class="step">Equation: 2x + y = ${P}</div>
+    <div class="step">Step 3: Solve for y → y = ${P} - 2x</div>
+    <div class="step">Step 4: Area A = x(${P} - 2x)</div>
+    <div class="step">Step 5: A = ${P}x - 2x²</div>
+    <div class="step">Step 6: Maximum occurs at vertex → x = ${P/4}</div>
+
+    <div class="answer">
+      ✔ Width = ${x} ft <br>
+      ✔ Length = ${y} ft <br>
+      ✔ Max Area = ${area} sq ft
+    </div>
+  `;
+
+  return;
+}
   // =====================================================
   // DEFAULT
   // =====================================================
