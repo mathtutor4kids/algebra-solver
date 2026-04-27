@@ -1,40 +1,16 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Algebra Solver</title>
-  <style>
-    body { font-family: Arial; background:#0f172a; color:white; }
-    .container { max-width:700px; margin:40px auto; background:#111827; padding:20px; border-radius:10px; }
-    textarea { width:100%; height:120px; }
-    button { width:100%; padding:10px; margin-top:10px; }
-    #result { margin-top:20px; background:#1f2937; padding:15px; border-radius:10px; }
-  </style>
-</head>
-
-<body>
-
-<div class="container">
-  <h2>Algebra Solver</h2>
-
-  <textarea id="input" placeholder="Type problem here..."></textarea>
-
-  <button onclick="solve()">Solve</button>
-
-  <div id="result"></div>
-</div>
-
 <script>
 function solve() {
   let text = document.getElementById("input").value.toLowerCase();
   let result = document.getElementById("result");
 
-  // safety check
-  if (!text) {
+  if (!text.trim()) {
     result.innerHTML = "Please enter a problem.";
     return;
   }
 
-  // linear equation detection
+  // =========================
+  // 1. LINEAR EQUATIONS (ax + b = c)
+  // =========================
   let eqMatch = text.match(/([+-]?\d*)x\s*([+-]\s*\d+)?\s*=\s*([+-]?\d+)/);
 
   if (eqMatch) {
@@ -46,17 +22,59 @@ function solve() {
     b = b ? parseInt(b.replace(/\s/g, "")) : 0;
     c = parseInt(c);
 
-    let x = (c - b) / a;
+    let step1 = `Step 1: Start with equation<br>${a}x ${b >= 0 ? "+ " + b : "- " + Math.abs(b)} = ${c}<br><br>`;
+
+    let step2 = `Step 2: Move constant<br>${a}x = ${c} - (${b}) = ${c - b}<br><br>`;
+
+    let step3 = `Step 3: Divide both sides<br>x = ${(c - b)} ÷ ${a}<br><br>`;
+
+    let step4 = `Step 4: Simplify<br>x = ${(c - b) / a}<br><br>`;
 
     result.innerHTML =
-      "Linear Equation<br><br>" +
-      "x = " + x;
+      "<b>📘 Linear Equation Solution</b><br><br>" +
+      step1 + step2 + step3 + step4 +
+      "<b>✔ Final Answer: x = " + ((c - b) / a) + "</b>";
 
     return;
   }
 
-  // fencing problem
+  // =========================
+  // 2. MULTI-STEP EQUATIONS (3x - 7 = 2x + 5)
+  // =========================
+  let multiMatch = text.match(/([+-]?\d*)x\s*([+-]\s*\d+)?\s*=\s*([+-]?\d*)x\s*([+-]\s*\d+)?/);
+
+  if (multiMatch) {
+    let a = multiMatch[1];
+    let b = multiMatch[2];
+    let c = multiMatch[3];
+    let d = multiMatch[4];
+
+    a = (a === "" || a === "+") ? 1 : (a === "-") ? -1 : parseInt(a);
+    c = (c === "" || c === "+") ? 1 : (c === "-") ? -1 : parseInt(c);
+
+    b = b ? parseInt(b.replace(/\s/g, "")) : 0;
+    d = d ? parseInt(d.replace(/\s/g, "")) : 0;
+
+    let leftConst = -b + d;
+    let xCoeff = a - c;
+
+    let x = leftConst / xCoeff;
+
+    result.innerHTML =
+      "<b>📘 Multi-Step Equation</b><br><br>" +
+      `Step 1: Move variables to one side<br>${a}x - ${c}x = ${d} + ${b}<br><br>` +
+      `Step 2: Combine like terms<br>${xCoeff}x = ${leftConst}<br><br>` +
+      `Step 3: Divide<br>x = ${leftConst} ÷ ${xCoeff}<br><br>` +
+      "<b>✔ Final Answer: x = " + x + "</b>";
+
+    return;
+  }
+
+  // =========================
+  // 3. FENCING / OPTIMIZATION
+  // =========================
   if (text.includes("fencing") || text.includes("garden") || text.includes("wall")) {
+
     let P = 100;
 
     let x = P / 4;
@@ -64,17 +82,47 @@ function solve() {
     let area = x * y;
 
     result.innerHTML =
-      "Optimization Problem<br><br>" +
-      "Width = " + x + "<br>" +
-      "Length = " + y + "<br>" +
-      "Max Area = " + area;
+      "<b>📘 Optimization (Fence Problem)</b><br><br>" +
+      "Step 1: Let width = x<br>" +
+      "Step 2: Only 3 sides fenced → 2x + y = 100<br>" +
+      "Step 3: Solve for y → y = 100 - 2x<br>" +
+      "Step 4: Area = x(100 - 2x)<br>" +
+      "Step 5: Max occurs at vertex → x = 25<br>" +
+      "Step 6: y = 50<br><br>" +
+      "<b>✔ Dimensions:</b> x = 25, y = 50<br>" +
+      "<b>✔ Max Area:</b> " + area;
 
     return;
   }
 
-  result.innerHTML = "Problem not recognized yet.";
+  // =========================
+  // 4. WORD PROBLEM GUIDE (GENERAL)
+  // =========================
+  if (
+    text.includes("rectangle") ||
+    text.includes("age") ||
+    text.includes("distance") ||
+    text.includes("speed") ||
+    text.includes("time")
+  ) {
+    result.innerHTML =
+      "<b>📘 Word Problem Strategy</b><br><br>" +
+      "Step 1: Define variable (let x = unknown)<br>" +
+      "Step 2: Translate words → equation<br>" +
+      "Step 3: Solve like algebra equation<br>" +
+      "Step 4: Check answer makes sense<br><br>" +
+      "<b>✔ Tip:</b> Convert sentences into math first.";
+    return;
+  }
+
+  // =========================
+  // DEFAULT
+  // =========================
+  result.innerHTML =
+    "❗ Supported problems:<br>" +
+    "• Linear equations<br>" +
+    "• Multi-step equations<br>" +
+    "• Fencing optimization<br>" +
+    "• Basic word problems";
 }
 </script>
-
-</body>
-</html>
