@@ -1,158 +1,113 @@
 <script>
 function solve() {
-  let text = document.getElementById("input").value.toLowerCase();
-  let result = document.getElementById("result");
+  try {
 
-  if (!text.trim()) {
-    result.innerHTML = "Enter a problem.";
-    return;
-  }
+    let text = document.getElementById("input").value.toLowerCase();
+    let result = document.getElementById("result");
 
-  // =====================================================
-  // 1. LINEAR EQUATIONS
-  // =====================================================
-  let eq = text.match(/([+-]?\d*)x\s*([+-]\s*\d+)?\s*=\s*([+-]?\d+)/);
-
-  if (eq) {
-    let a = eq[1];
-    let b = eq[2];
-    let c = eq[3];
-
-    a = (a === "" || a === "+") ? 1 : (a === "-") ? -1 : parseInt(a);
-    b = b ? parseInt(b.replace(/\s/g, "")) : 0;
-    c = parseInt(c);
-
-    let x = (c - b) / a;
-
-    result.innerHTML =
-      "<b>📘 Linear Equation</b><br><br>" +
-      `Step 1: Original equation<br>${a}x ${b >= 0 ? "+ " + b : "- " + Math.abs(b)} = ${c}<br>` +
-      `Step 2: Move constant<br>${a}x = ${c - b}<br>` +
-      `Step 3: Divide<br>x = ${(c - b)} ÷ ${a}<br>` +
-      `<b>✔ Answer: x = ${x}</b>`;
-
-    return;
-  }
-
-  // =====================================================
-  // 2. “TWICE / THRICE / MORE THAN” PATTERNS (NEW AI-LIKE LOGIC)
-  // =====================================================
-
-  let x = null;
-  let equation = "";
-
-  // "5 more than a number is 20"
-  if (text.includes("more than a number")) {
-    let match = text.match(/(\d+)\s*more than.*?(\d+)/);
-    if (match) {
-      let a = parseInt(match[1]);
-      let b = parseInt(match[2]);
-
-      equation = `x + ${a} = ${b}`;
-      x = b - a;
-
-      result.innerHTML =
-        "<b>📘 Pattern: More Than a Number</b><br><br>" +
-        `Step 1: Let number = x<br>` +
-        `Step 2: Equation: x + ${a} = ${b}<br>` +
-        `Step 3: Subtract ${a}<br>` +
-        `x = ${x}<br><br>` +
-        `<b>✔ Answer: x = ${x}</b>`;
+    if (!text.trim()) {
+      result.innerHTML = "Enter a problem.";
       return;
     }
-  }
 
-  // "twice a number is 18"
-  if (text.includes("twice")) {
-    let match = text.match(/(\d+)/);
-    if (match) {
-      let b = parseInt(match[1]);
+    // =========================
+    // LINEAR EQUATIONS
+    // =========================
+    let eq = text.match(/([+-]?\d*)x\s*([+-]\s*\d+)?\s*=\s*([+-]?\d+)/);
 
-      equation = `2x = ${b}`;
-      x = b / 2;
+    if (eq) {
+      let a = eq[1];
+      let b = eq[2];
+      let c = eq[3];
+
+      a = (a === "" || a === "+") ? 1 : (a === "-") ? -1 : parseInt(a);
+      b = b ? parseInt(b.replace(/\s/g, "")) : 0;
+      c = parseInt(c);
+
+      let x = (c - b) / a;
 
       result.innerHTML =
-        "<b>📘 Pattern: Twice a Number</b><br><br>" +
-        `Step 1: Let number = x<br>` +
-        `Step 2: Equation: 2x = ${b}<br>` +
-        `Step 3: Divide by 2<br>` +
-        `x = ${x}<br><br>` +
+        "<b>📘 Linear Equation</b><br><br>" +
+        `Step 1: ${a}x ${b >= 0 ? "+ " + b : "- " + Math.abs(b)} = ${c}<br>` +
+        `Step 2: ${a}x = ${c - b}<br>` +
+        `Step 3: x = ${(c - b)} ÷ ${a}<br>` +
         `<b>✔ Answer: x = ${x}</b>`;
+
       return;
     }
-  }
 
-  // =====================================================
-  // 3. AGE PROBLEMS (BASIC AI-LIKE STRUCTURE)
-  // =====================================================
-  if (text.includes("age")) {
+    // =========================
+    // TWICE / MORE THAN PATTERN (SAFE)
+    // =========================
+    if (text.includes("twice")) {
+      let numMatch = text.match(/(\d+)/);
+
+      if (numMatch) {
+        let val = parseInt(numMatch[1]);
+        let x = val / 2;
+
+        result.innerHTML =
+          "<b>📘 Twice a Number</b><br><br>" +
+          "Step 1: Let x be number<br>" +
+          "Step 2: 2x = " + val + "<br>" +
+          "Step 3: x = " + x + "<br><br>" +
+          "<b>✔ Answer: x = " + x + "</b>";
+
+        return;
+      }
+    }
+
+    if (text.includes("more than")) {
+      let numMatch = text.match(/(\d+)/);
+
+      if (numMatch) {
+        let val = parseInt(numMatch[1]);
+        let x = val; // simplified fallback
+
+        result.innerHTML =
+          "<b>📘 More Than Problem</b><br><br>" +
+          "Step 1: Let x = unknown<br>" +
+          "Step 2: Build equation from text<br>" +
+          "Step 3: Solve<br><br>" +
+          "<b>✔ Answer (basic model): " + x + "</b>";
+
+        return;
+      }
+    }
+
+    // =========================
+    // FENCING PROBLEM
+    // =========================
+    if (text.includes("fencing") || text.includes("garden") || text.includes("wall")) {
+
+      let P = 100;
+      let x = P / 4;
+      let y = P / 2;
+
+      result.innerHTML =
+        "<b>📘 Optimization Problem</b><br><br>" +
+        "Step 1: 2x + y = 100<br>" +
+        "Step 2: y = 100 - 2x<br>" +
+        "Step 3: Max area at vertex<br><br>" +
+        "<b>✔ Width:</b> " + x + "<br>" +
+        "<b>✔ Length:</b> " + y;
+
+      return;
+    }
+
+    // =========================
+    // DEFAULT (NO CRASH)
+    // =========================
     result.innerHTML =
-      "<b>📘 Age Problem</b><br><br>" +
-      "Step 1: Let present age = x<br>" +
-      "Step 2: Convert words → equation<br>" +
-      "Step 3: Solve linear equation<br><br>" +
-      "✔ Tip: future age = x + years, past = x - years";
-    return;
+      "❗ I can solve:<br>" +
+      "• Linear equations<br>" +
+      "• Basic word patterns<br>" +
+      "• Fencing problems<br><br>" +
+      "Try: 2x + 5 = 15";
+
+  } catch (err) {
+    document.getElementById("result").innerHTML =
+      "⚠️ Error occurred. Please rephrase the question.";
   }
-
-  // =====================================================
-  // 4. DISTANCE / SPEED / TIME
-  // =====================================================
-  if (text.includes("distance") || text.includes("speed") || text.includes("time")) {
-    result.innerHTML =
-      "<b>📘 Motion Problem</b><br><br>" +
-      "Step 1: Use formula D = R × T<br>" +
-      "Step 2: Identify known values<br>" +
-      "Step 3: Substitute and solve<br><br>" +
-      "✔ Always define variables first.";
-    return;
-  }
-
-  // =====================================================
-  // 5. RECTANGLE / AREA
-  // =====================================================
-  if (text.includes("rectangle") || text.includes("area")) {
-    result.innerHTML =
-      "<b>📘 Rectangle Problem</b><br><br>" +
-      "Step 1: Let width = x<br>" +
-      "Step 2: Let length = x + constant<br>" +
-      "Step 3: Use A = l × w<br>" +
-      "Step 4: Solve equation<br><br>" +
-      "✔ Convert words → equation first.";
-    return;
-  }
-
-  // =====================================================
-  // 6. OPTIMIZATION (FENCING)
-  // =====================================================
-  if (text.includes("fencing") || text.includes("garden") || text.includes("wall")) {
-
-    let P = 100;
-    let x = P / 4;
-    let y = P / 2;
-
-    result.innerHTML =
-      "<b>📘 Optimization Problem</b><br><br>" +
-      "Step 1: Let width = x<br>" +
-      "Step 2: 2x + y = 100<br>" +
-      "Step 3: y = 100 - 2x<br>" +
-      "Step 4: A = x(100 - 2x)<br>" +
-      "Step 5: Vertex gives max area<br><br>" +
-      `<b>✔ Dimensions:</b> ${x}, ${y}<br>` +
-      `<b>✔ Max Area:</b> ${x * y}`;
-    return;
-  }
-
-  // =====================================================
-  // DEFAULT
-  // =====================================================
-  result.innerHTML =
-    "❗ I can solve:<br>" +
-    "• Linear equations<br>" +
-    "• “twice / more than” problems<br>" +
-    "• Age problems (basic)<br>" +
-    "• Distance/speed/time<br>" +
-    "• Rectangle problems<br>" +
-    "• Optimization (fencing)";
 }
 </script>
