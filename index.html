@@ -4,125 +4,155 @@ function solve() {
   let result = document.getElementById("result");
 
   if (!text.trim()) {
-    result.innerHTML = "Please enter a problem.";
+    result.innerHTML = "Enter a problem.";
     return;
   }
 
-  // =========================
-  // 1. LINEAR EQUATIONS (ax + b = c)
-  // =========================
-  let eqMatch = text.match(/([+-]?\d*)x\s*([+-]\s*\d+)?\s*=\s*([+-]?\d+)/);
+  // =====================================================
+  // 1. LINEAR EQUATIONS
+  // =====================================================
+  let eq = text.match(/([+-]?\d*)x\s*([+-]\s*\d+)?\s*=\s*([+-]?\d+)/);
 
-  if (eqMatch) {
-    let a = eqMatch[1];
-    let b = eqMatch[2];
-    let c = eqMatch[3];
+  if (eq) {
+    let a = eq[1];
+    let b = eq[2];
+    let c = eq[3];
 
     a = (a === "" || a === "+") ? 1 : (a === "-") ? -1 : parseInt(a);
     b = b ? parseInt(b.replace(/\s/g, "")) : 0;
     c = parseInt(c);
 
-    let step1 = `Step 1: Start with equation<br>${a}x ${b >= 0 ? "+ " + b : "- " + Math.abs(b)} = ${c}<br><br>`;
-
-    let step2 = `Step 2: Move constant<br>${a}x = ${c} - (${b}) = ${c - b}<br><br>`;
-
-    let step3 = `Step 3: Divide both sides<br>x = ${(c - b)} ÷ ${a}<br><br>`;
-
-    let step4 = `Step 4: Simplify<br>x = ${(c - b) / a}<br><br>`;
+    let x = (c - b) / a;
 
     result.innerHTML =
-      "<b>📘 Linear Equation Solution</b><br><br>" +
-      step1 + step2 + step3 + step4 +
-      "<b>✔ Final Answer: x = " + ((c - b) / a) + "</b>";
+      "<b>📘 Linear Equation</b><br><br>" +
+      `Step 1: Original equation<br>${a}x ${b >= 0 ? "+ " + b : "- " + Math.abs(b)} = ${c}<br>` +
+      `Step 2: Move constant<br>${a}x = ${c - b}<br>` +
+      `Step 3: Divide<br>x = ${(c - b)} ÷ ${a}<br>` +
+      `<b>✔ Answer: x = ${x}</b>`;
 
     return;
   }
 
-  // =========================
-  // 2. MULTI-STEP EQUATIONS (3x - 7 = 2x + 5)
-  // =========================
-  let multiMatch = text.match(/([+-]?\d*)x\s*([+-]\s*\d+)?\s*=\s*([+-]?\d*)x\s*([+-]\s*\d+)?/);
+  // =====================================================
+  // 2. “TWICE / THRICE / MORE THAN” PATTERNS (NEW AI-LIKE LOGIC)
+  // =====================================================
 
-  if (multiMatch) {
-    let a = multiMatch[1];
-    let b = multiMatch[2];
-    let c = multiMatch[3];
-    let d = multiMatch[4];
+  let x = null;
+  let equation = "";
 
-    a = (a === "" || a === "+") ? 1 : (a === "-") ? -1 : parseInt(a);
-    c = (c === "" || c === "+") ? 1 : (c === "-") ? -1 : parseInt(c);
+  // "5 more than a number is 20"
+  if (text.includes("more than a number")) {
+    let match = text.match(/(\d+)\s*more than.*?(\d+)/);
+    if (match) {
+      let a = parseInt(match[1]);
+      let b = parseInt(match[2]);
 
-    b = b ? parseInt(b.replace(/\s/g, "")) : 0;
-    d = d ? parseInt(d.replace(/\s/g, "")) : 0;
+      equation = `x + ${a} = ${b}`;
+      x = b - a;
 
-    let leftConst = -b + d;
-    let xCoeff = a - c;
+      result.innerHTML =
+        "<b>📘 Pattern: More Than a Number</b><br><br>" +
+        `Step 1: Let number = x<br>` +
+        `Step 2: Equation: x + ${a} = ${b}<br>` +
+        `Step 3: Subtract ${a}<br>` +
+        `x = ${x}<br><br>` +
+        `<b>✔ Answer: x = ${x}</b>`;
+      return;
+    }
+  }
 
-    let x = leftConst / xCoeff;
+  // "twice a number is 18"
+  if (text.includes("twice")) {
+    let match = text.match(/(\d+)/);
+    if (match) {
+      let b = parseInt(match[1]);
 
+      equation = `2x = ${b}`;
+      x = b / 2;
+
+      result.innerHTML =
+        "<b>📘 Pattern: Twice a Number</b><br><br>" +
+        `Step 1: Let number = x<br>` +
+        `Step 2: Equation: 2x = ${b}<br>` +
+        `Step 3: Divide by 2<br>` +
+        `x = ${x}<br><br>` +
+        `<b>✔ Answer: x = ${x}</b>`;
+      return;
+    }
+  }
+
+  // =====================================================
+  // 3. AGE PROBLEMS (BASIC AI-LIKE STRUCTURE)
+  // =====================================================
+  if (text.includes("age")) {
     result.innerHTML =
-      "<b>📘 Multi-Step Equation</b><br><br>" +
-      `Step 1: Move variables to one side<br>${a}x - ${c}x = ${d} + ${b}<br><br>` +
-      `Step 2: Combine like terms<br>${xCoeff}x = ${leftConst}<br><br>` +
-      `Step 3: Divide<br>x = ${leftConst} ÷ ${xCoeff}<br><br>` +
-      "<b>✔ Final Answer: x = " + x + "</b>";
-
+      "<b>📘 Age Problem</b><br><br>" +
+      "Step 1: Let present age = x<br>" +
+      "Step 2: Convert words → equation<br>" +
+      "Step 3: Solve linear equation<br><br>" +
+      "✔ Tip: future age = x + years, past = x - years";
     return;
   }
 
-  // =========================
-  // 3. FENCING / OPTIMIZATION
-  // =========================
+  // =====================================================
+  // 4. DISTANCE / SPEED / TIME
+  // =====================================================
+  if (text.includes("distance") || text.includes("speed") || text.includes("time")) {
+    result.innerHTML =
+      "<b>📘 Motion Problem</b><br><br>" +
+      "Step 1: Use formula D = R × T<br>" +
+      "Step 2: Identify known values<br>" +
+      "Step 3: Substitute and solve<br><br>" +
+      "✔ Always define variables first.";
+    return;
+  }
+
+  // =====================================================
+  // 5. RECTANGLE / AREA
+  // =====================================================
+  if (text.includes("rectangle") || text.includes("area")) {
+    result.innerHTML =
+      "<b>📘 Rectangle Problem</b><br><br>" +
+      "Step 1: Let width = x<br>" +
+      "Step 2: Let length = x + constant<br>" +
+      "Step 3: Use A = l × w<br>" +
+      "Step 4: Solve equation<br><br>" +
+      "✔ Convert words → equation first.";
+    return;
+  }
+
+  // =====================================================
+  // 6. OPTIMIZATION (FENCING)
+  // =====================================================
   if (text.includes("fencing") || text.includes("garden") || text.includes("wall")) {
 
     let P = 100;
-
     let x = P / 4;
     let y = P / 2;
-    let area = x * y;
 
     result.innerHTML =
-      "<b>📘 Optimization (Fence Problem)</b><br><br>" +
+      "<b>📘 Optimization Problem</b><br><br>" +
       "Step 1: Let width = x<br>" +
-      "Step 2: Only 3 sides fenced → 2x + y = 100<br>" +
-      "Step 3: Solve for y → y = 100 - 2x<br>" +
-      "Step 4: Area = x(100 - 2x)<br>" +
-      "Step 5: Max occurs at vertex → x = 25<br>" +
-      "Step 6: y = 50<br><br>" +
-      "<b>✔ Dimensions:</b> x = 25, y = 50<br>" +
-      "<b>✔ Max Area:</b> " + area;
-
+      "Step 2: 2x + y = 100<br>" +
+      "Step 3: y = 100 - 2x<br>" +
+      "Step 4: A = x(100 - 2x)<br>" +
+      "Step 5: Vertex gives max area<br><br>" +
+      `<b>✔ Dimensions:</b> ${x}, ${y}<br>` +
+      `<b>✔ Max Area:</b> ${x * y}`;
     return;
   }
 
-  // =========================
-  // 4. WORD PROBLEM GUIDE (GENERAL)
-  // =========================
-  if (
-    text.includes("rectangle") ||
-    text.includes("age") ||
-    text.includes("distance") ||
-    text.includes("speed") ||
-    text.includes("time")
-  ) {
-    result.innerHTML =
-      "<b>📘 Word Problem Strategy</b><br><br>" +
-      "Step 1: Define variable (let x = unknown)<br>" +
-      "Step 2: Translate words → equation<br>" +
-      "Step 3: Solve like algebra equation<br>" +
-      "Step 4: Check answer makes sense<br><br>" +
-      "<b>✔ Tip:</b> Convert sentences into math first.";
-    return;
-  }
-
-  // =========================
+  // =====================================================
   // DEFAULT
-  // =========================
+  // =====================================================
   result.innerHTML =
-    "❗ Supported problems:<br>" +
+    "❗ I can solve:<br>" +
     "• Linear equations<br>" +
-    "• Multi-step equations<br>" +
-    "• Fencing optimization<br>" +
-    "• Basic word problems";
+    "• “twice / more than” problems<br>" +
+    "• Age problems (basic)<br>" +
+    "• Distance/speed/time<br>" +
+    "• Rectangle problems<br>" +
+    "• Optimization (fencing)";
 }
 </script>
