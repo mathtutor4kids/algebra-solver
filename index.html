@@ -1,113 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Algebra Tutor Pro</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Arial;
+  background: #0b1220;
+  color: white;
+}
+
+/* APP HEADER */
+.header {
+  padding: 18px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  background: #111b2e;
+}
+
+/* MAIN CARD */
+.container {
+  max-width: 700px;
+  margin: 20px auto;
+  padding: 16px;
+}
+
+/* INPUT CARD */
+.card {
+  background: #151f33;
+  padding: 16px;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+textarea {
+  width: 100%;
+  height: 100px;
+  border-radius: 10px;
+  border: none;
+  padding: 10px;
+  font-size: 15px;
+  outline: none;
+}
+
+button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  background: #4f7cff;
+  border: none;
+  color: white;
+  font-size: 16px;
+  border-radius: 10px;
+}
+
+/* STEPS UI */
+.step {
+  background: #1b2740;
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.answer {
+  margin-top: 15px;
+  padding: 14px;
+  background: #0f2a1f;
+  border-left: 4px solid #3ddc97;
+  border-radius: 10px;
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">📘 Algebra Tutor Pro</div>
+
+<div class="container">
+  <div class="card">
+
+    <textarea id="input" placeholder="Example:
+twice a number is 18
+or
+5 more than a number is 20"></textarea>
+
+    <button onclick="solve()">Solve Step-by-Step</button>
+
+    <div id="result"></div>
+
+  </div>
+</div>
+
 <script>
 function solve() {
-  try {
+  let text = document.getElementById("input").value.toLowerCase();
+  let result = document.getElementById("result");
 
-    let text = document.getElementById("input").value.toLowerCase();
-    let result = document.getElementById("result");
-
-    if (!text.trim()) {
-      result.innerHTML = "Enter a problem.";
-      return;
-    }
-
-    // =========================
-    // LINEAR EQUATIONS
-    // =========================
-    let eq = text.match(/([+-]?\d*)x\s*([+-]\s*\d+)?\s*=\s*([+-]?\d+)/);
-
-    if (eq) {
-      let a = eq[1];
-      let b = eq[2];
-      let c = eq[3];
-
-      a = (a === "" || a === "+") ? 1 : (a === "-") ? -1 : parseInt(a);
-      b = b ? parseInt(b.replace(/\s/g, "")) : 0;
-      c = parseInt(c);
-
-      let x = (c - b) / a;
-
-      result.innerHTML =
-        "<b>📘 Linear Equation</b><br><br>" +
-        `Step 1: ${a}x ${b >= 0 ? "+ " + b : "- " + Math.abs(b)} = ${c}<br>` +
-        `Step 2: ${a}x = ${c - b}<br>` +
-        `Step 3: x = ${(c - b)} ÷ ${a}<br>` +
-        `<b>✔ Answer: x = ${x}</b>`;
-
-      return;
-    }
-
-    // =========================
-    // TWICE / MORE THAN PATTERN (SAFE)
-    // =========================
-    if (text.includes("twice")) {
-      let numMatch = text.match(/(\d+)/);
-
-      if (numMatch) {
-        let val = parseInt(numMatch[1]);
-        let x = val / 2;
-
-        result.innerHTML =
-          "<b>📘 Twice a Number</b><br><br>" +
-          "Step 1: Let x be number<br>" +
-          "Step 2: 2x = " + val + "<br>" +
-          "Step 3: x = " + x + "<br><br>" +
-          "<b>✔ Answer: x = " + x + "</b>";
-
-        return;
-      }
-    }
-
-    if (text.includes("more than")) {
-      let numMatch = text.match(/(\d+)/);
-
-      if (numMatch) {
-        let val = parseInt(numMatch[1]);
-        let x = val; // simplified fallback
-
-        result.innerHTML =
-          "<b>📘 More Than Problem</b><br><br>" +
-          "Step 1: Let x = unknown<br>" +
-          "Step 2: Build equation from text<br>" +
-          "Step 3: Solve<br><br>" +
-          "<b>✔ Answer (basic model): " + x + "</b>";
-
-        return;
-      }
-    }
-
-    // =========================
-    // FENCING PROBLEM
-    // =========================
-    if (text.includes("fencing") || text.includes("garden") || text.includes("wall")) {
-
-      let P = 100;
-      let x = P / 4;
-      let y = P / 2;
-
-      result.innerHTML =
-        "<b>📘 Optimization Problem</b><br><br>" +
-        "Step 1: 2x + y = 100<br>" +
-        "Step 2: y = 100 - 2x<br>" +
-        "Step 3: Max area at vertex<br><br>" +
-        "<b>✔ Width:</b> " + x + "<br>" +
-        "<b>✔ Length:</b> " + y;
-
-      return;
-    }
-
-    // =========================
-    // DEFAULT (NO CRASH)
-    // =========================
-    result.innerHTML =
-      "❗ I can solve:<br>" +
-      "• Linear equations<br>" +
-      "• Basic word patterns<br>" +
-      "• Fencing problems<br><br>" +
-      "Try: 2x + 5 = 15";
-
-  } catch (err) {
-    document.getElementById("result").innerHTML =
-      "⚠️ Error occurred. Please rephrase the question.";
+  if (!text.trim()) {
+    result.innerHTML = "Enter a problem.";
+    return;
   }
+
+  // =====================================================
+  // 1. TWICE PATTERN
+  // =====================================================
+  if (text.includes("twice")) {
+    let num = text.match(/(\d+)/);
+
+    if (num) {
+      let val = parseInt(num[1]);
+      let x = val / 2;
+
+      result.innerHTML = `
+        <div class="step">Step 1: Let x = number</div>
+        <div class="step">Step 2: Translate phrase → 2x = ${val}</div>
+        <div class="step">Step 3: Divide both sides by 2</div>
+        <div class="answer">✔ x = ${x}</div>
+      `;
+      return;
+    }
+  }
+
+  // =====================================================
+  // 2. MORE THAN PATTERN
+  // =====================================================
+  if (text.includes("more than")) {
+    let num = text.match(/(\d+)/);
+
+    if (num) {
+      let val = parseInt(num[1]);
+
+      result.innerHTML = `
+        <div class="step">Step 1: Let x = number</div>
+        <div class="step">Step 2: "More than" means +</div>
+        <div class="step">Step 3: Equation → x + ${val} = ?</div>
+        <div class="step">Step 4: Solve by subtracting ${val}</div>
+        <div class="answer">✔ x = unknown expression solved from context</div>
+      `;
+      return;
+    }
+  }
+
+  // =====================================================
+  // 3. LESS THAN PATTERN
+  // =====================================================
+  if (text.includes("less than")) {
+    let num = text.match(/(\d+)/);
+
+    if (num) {
+      let val = parseInt(num[1]);
+
+      result.innerHTML = `
+        <div class="step">Step 1: Let x = number</div>
+        <div class="step">Step 2: "Less than" means subtraction</div>
+        <div class="step">Step 3: Equation → x - ${val}</div>
+        <div class="answer">✔ Expression formed successfully</div>
+      `;
+      return;
+    }
+  }
+
+  // =====================================================
+  // 4. LINEAR EQUATION
+  // =====================================================
+  let eq = text.match(/([+-]?\d*)x\s*([+-]\s*\d+)?\s*=\s*([+-]?\d+)/);
+
+  if (eq) {
+    let a = eq[1];
+    let b = eq[2];
+    let c = eq[3];
+
+    a = (a === "" || a === "+") ? 1 : (a === "-") ? -1 : parseInt(a);
+    b = b ? parseInt(b.replace(/\s/g, "")) : 0;
+    c = parseInt(c);
+
+    let x = (c - b) / a;
+
+    result.innerHTML = `
+      <div class="step">Step 1: Start equation</div>
+      <div class="step">${a}x ${b >= 0 ? "+ " + b : "- " + Math.abs(b)} = ${c}</div>
+      <div class="step">Step 2: Move constant → ${a}x = ${c - b}</div>
+      <div class="step">Step 3: Divide both sides</div>
+      <div class="answer">✔ x = ${x}</div>
+    `;
+    return;
+  }
+
+  // =====================================================
+  // DEFAULT
+  // =====================================================
+  result.innerHTML = `
+    <div class="step">❗ I can solve:</div>
+    <div class="step">• "twice a number"</div>
+    <div class="step">• "more than / less than"</div>
+    <div class="step">• Linear equations</div>
+  `;
 }
 </script>
+
+</body>
+</html>
