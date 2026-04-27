@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Algebra Tutor (No API)</title>
+  <title>Smart Algebra Solver</title>
 
   <style>
     body {
@@ -13,7 +13,7 @@
     }
 
     .container {
-      max-width: 750px;
+      max-width: 800px;
       margin: 40px auto;
       background: #111827;
       padding: 25px;
@@ -27,10 +27,10 @@
 
     textarea {
       width: 100%;
-      height: 120px;
+      height: 110px;
       padding: 10px;
-      border-radius: 8px;
       font-size: 16px;
+      border-radius: 8px;
     }
 
     button {
@@ -41,22 +41,14 @@
       color: white;
       border: none;
       border-radius: 8px;
-      cursor: pointer;
     }
 
     #result {
       margin-top: 20px;
-      padding: 15px;
       background: #1f2937;
+      padding: 15px;
       border-radius: 10px;
-      min-height: 100px;
       line-height: 1.6;
-    }
-
-    .hint {
-      font-size: 13px;
-      color: #9ca3af;
-      text-align: center;
     }
   </style>
 </head>
@@ -64,76 +56,97 @@
 <body>
 
 <div class="container">
-  <h1>📘 Algebra Tutor (No API)</h1>
+  <h1>📘 Smart Algebra Solver (No API)</h1>
 
-  <p class="hint">
-    Works for linear equations, basic word problems, and expressions
-  </p>
+  <textarea id="input" placeholder="Try:
+2x + 5 = 15
+OR:
+A rectangle has length 5 more than width and area 84"></textarea>
 
-  <textarea id="question" placeholder="Example: Solve 2x + 5 = 15"></textarea>
-
-  <button onclick="solve()">Solve Step-by-Step</button>
+  <button onclick="solve()">Solve</button>
 
   <div id="result"></div>
 </div>
 
 <script>
 function solve() {
-  const q = document.getElementById("question").value.toLowerCase();
-  const result = document.getElementById("result");
+  let text = document.getElementById("input").value.toLowerCase();
+  let result = document.getElementById("result");
 
-  if (!q.trim()) {
-    result.innerHTML = "❗ Please enter a problem.";
-    return;
-  }
+  // =========================
+  // 1. LINEAR EQUATIONS
+  // =========================
+  let eqMatch = text.match(/([+-]?\d*)x\s*([+-]\s*\d+)?\s*=\s*([+-]?\d+)/);
 
-  // --- LINEAR EQUATION PATTERN ---
-  if (q.includes("x") && q.includes("=") && q.includes("+")) {
+  if (eqMatch) {
+    let a = eqMatch[1];
+    let b = eqMatch[2];
+    let c = eqMatch[3];
+
+    a = (a === "" || a === "+") ? 1 : (a === "-") ? -1 : parseInt(a);
+    b = b ? parseInt(b.replace(/\s/g, "")) : 0;
+    c = parseInt(c);
+
+    let step1 = c - b;
+    let x = step1 / a;
+
     result.innerHTML = `
-      <h3>📘 Step-by-Step Solution</h3>
-      <p>1. Identify equation type: linear equation</p>
-      <p>2. Move constants to the other side</p>
-      <p>3. Isolate variable x</p>
-      <p>4. Solve by simplifying</p>
-      <br>
-      <p><b>Example method:</b></p>
-      <p>2x + 5 = 15</p>
-      <p>2x = 15 - 5</p>
-      <p>2x = 10</p>
-      <p>x = 5</p>
-      <br>
-      <b>✔ Final Answer: Check steps above pattern-matched solution</b>
+      <b>📘 Linear Equation Solution</b><br><br>
+      Step 1: Move constant to right side<br>
+      ${a}x = ${c - b}<br><br>
+
+      Step 2: Divide both sides by ${a}<br>
+      x = ${(c - b)} / ${a}<br><br>
+
+      <b>✔ Final Answer: x = ${x}</b>
     `;
     return;
   }
 
-  // --- WORD PROBLEM (basic rectangle type) ---
-  if (q.includes("rectangle") || q.includes("area")) {
+  // =========================
+  // 2. RECTANGLE WORD PROBLEM
+  // =========================
+  if (text.includes("rectangle") && text.includes("area")) {
     result.innerHTML = `
-      <h3>📘 Word Problem Strategy</h3>
-      <p>1. Define variables (let width = x)</p>
-      <p>2. Write expression for length</p>
-      <p>3. Use Area = length × width</p>
-      <p>4. Form equation and solve</p>
-      <br>
-      <p><b>Common formula:</b> A = l × w</p>
-      <p>Then solve using algebra steps</p>
-      <br>
-      <b>✔ Tip: Convert words → equation first</b>
+      <b>📘 Rectangle Word Problem</b><br><br>
+
+      Step 1: Let width = x<br>
+      Step 2: Let length = x + k (difference given in question)<br>
+      Step 3: Use formula A = l × w<br>
+      Step 4: Build equation<br>
+      Step 5: Solve for x<br><br>
+
+      ✔ Tip: Convert words → equation first
     `;
     return;
   }
 
-  // --- DEFAULT HELP ---
+  // =========================
+  // 3. AGE PROBLEMS
+  // =========================
+  if (text.includes("age")) {
+    result.innerHTML = `
+      <b>📘 Age Problem Strategy</b><br><br>
+      Step 1: Let current age = x<br>
+      Step 2: Future/past = x ± number<br>
+      Step 3: Form equation using condition<br>
+      Step 4: Solve like linear equation<br><br>
+
+      ✔ Tip: Track time changes carefully
+    `;
+    return;
+  }
+
+  // =========================
+  // DEFAULT
+  // =========================
   result.innerHTML = `
-    <h3>🤖 I can help you with this problem</h3>
-    <p>This solver currently supports:</p>
-    <ul>
-      <li>Linear equations (2x + 5 = 15)</li>
-      <li>Basic word problems (area, rectangles)</li>
-      <li>Simple algebra expressions</li>
-    </ul>
-    <p>Try rephrasing or a simpler format.</p>
+    ❗ I can currently solve:<br>
+    • Linear equations (2x + 5 = 15)<br>
+    • Basic rectangle word problems<br>
+    • Age problems<br><br>
+
+    Try rewriting your question in a simpler format.
   `;
 }
 </script>
